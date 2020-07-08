@@ -1,0 +1,8 @@
+---
+win_node_bootstrap_script_dir: "C:/k/prepare"
+win_node_bootstrap_script_url: "https://github.com/kubernetes-sigs/sig-windows-tools/releases/latest/download/PrepareNode.ps1"
+
+win_cni_installation_path: "C:/k/cni"
+win_cni_config_path: "C:/k/cni/config"
+
+kubernetes_version: 1.18.5

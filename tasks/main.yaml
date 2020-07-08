@@ -1,0 +1,18 @@
+---
+- name: Win Kubernetes Hosts | Ensure bootstrap dir exists
+  win_file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  loop:
+    - "{{ win_node_bootstrap_script_dir }}"
+
+- name: Win Kubernetes Hosts | Downloaad Kubernetes node bootstrap script
+  win_template:
+    src: PrepareNode.ps1.j2
+    dest: "{{ win_node_bootstrap_script_dir }}/PrepareNode.ps1"
+
+- name: Win Kubernetes Hosts | Bootstrap node
+  win_shell: .\PrepareNode.ps1 -KubernetesVersion "{{ kubernetes_version }}"
+  args:
+    chdir: "{{ win_node_bootstrap_script_dir }}"
