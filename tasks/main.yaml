@@ -7,12 +7,31 @@
   loop:
     - "{{ win_node_bootstrap_script_dir }}"
 
-- name: Win Kubernetes Hosts | Downloaad Kubernetes node bootstrap script
+- name: Win Kubernetes Hosts | Downlaad Kubernetes node bootstrap script
   win_template:
     src: PrepareNode.ps1.j2
     dest: "{{ win_node_bootstrap_script_dir }}/PrepareNode.ps1"
+
+- name: Win Kubernetes Hosts | Check if kubelet is already-running
+  win_service:
+    name: kubelet
+  register: kubelet
+
+- name: Win Kubernetes Hosts | Check if rancher-wins is already-running
+  win_service:
+    name: kubelet
+  register: rancher_wins
 
 - name: Win Kubernetes Hosts | Bootstrap node
   win_shell: .\PrepareNode.ps1 -KubernetesVersion "{{ kubernetes_version }}"
   args:
     chdir: "{{ win_node_bootstrap_script_dir }}"
+  when: not kubelet.exists and not rancher_wins.exists
+
+- name: Win Kubernetes Hosts | Get kube-proxy DS
+  shell: |
+    curl -L {{ win_node_kube_proxy_ds_url }} | sed 's/VERSION/{{ kubernetes_version }}/g' | kubectl apply -f -
+  run_once: true
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  delegate_to: "{{ groups['master'] | random(seed=inventory_hostname) }}"
