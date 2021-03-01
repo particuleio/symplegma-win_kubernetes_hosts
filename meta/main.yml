@@ -4,9 +4,9 @@ galaxy_info:
   description: Ansible role to bootstrap Kubernetes on Windows
   company: clusterfraks-dynamics
   platforms:
-  - name: Windows
-    version:
-    - any
+    - name: Windows
+      version:
+        - any
 
   license: Apache
 
