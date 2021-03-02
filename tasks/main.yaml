@@ -7,7 +7,7 @@
   loop:
     - "{{ win_node_bootstrap_script_dir }}"
 
-- name: Win Kubernetes Hosts | Downlaad Kubernetes node bootstrap script
+- name: Win Kubernetes Hosts | Download Kubernetes node bootstrap script
   win_template:
     src: PrepareNode.ps1.j2
     dest: "{{ win_node_bootstrap_script_dir }}/PrepareNode.ps1"
@@ -28,9 +28,9 @@
     chdir: "{{ win_node_bootstrap_script_dir }}"
   when: not kubelet.exists and not rancher_wins.exists
 
-- name: Win Kubernetes Hosts | Get kube-proxy DS
+- name: Win Kubernetes Hosts | Get kube-proxy DS  # noqa command-instead-of-module
   shell: |
-    curl -L {{ win_node_kube_proxy_ds_url }} | sed 's/VERSION/{{ kubernetes_version }}/g' | kubectl apply -f -
+    set -o pipefail && curl -L {{ win_node_kube_proxy_ds_url }} | sed 's/VERSION/{{ kubernetes_version }}/g' | kubectl apply -f -
   run_once: true
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
